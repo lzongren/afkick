@@ -4,8 +4,8 @@ Fix webcams whose autofocus never engages until vendor software pokes them.
 
 ## TL;DR
 
-Some external UVC webcams — notably the 4K camera built into the **Dell
-U3223QZ** video-conferencing monitor — report autofocus as *enabled* but never
+Some external UVC webcams, notably the 4K camera built into the **Dell
+U3223QZ** video-conferencing monitor, report autofocus as *enabled* but never
 actually run a focus scan when Zoom, Teams, Chime, or a browser opens the
 stream. The image stays blurry until Dell's own app (DDPM / Dell Peripheral
 Manager) touches the camera. `afkick` removes that dependency: it watches for
@@ -31,7 +31,7 @@ image snaps into focus                       v
 
 The camera's focus logic idles until it receives a UVC
 `CT_FOCUS_AUTO_CONTROL` write. Dell's desktop software re-applies camera
-settings whenever the device changes state, which is what "fixes" it — the
+settings whenever the device changes state, which is what "fixes" it: the
 camera platform effectively outsources its autofocus wake-up to host
 software. On a Mac without DDPM running (or when DDPM doesn't notice the
 stream), nothing sends that write, so the lens sits at its parked position.
@@ -61,7 +61,7 @@ afkick kick --camera Dell
 # watch in the foreground (Ctrl-C to stop)
 afkick watch --camera Dell
 
-# install as a login agent — runs in the background from now on
+# install as a login agent, runs in the background from now on
 afkick install --camera Dell
 
 # remove the agent
@@ -88,7 +88,7 @@ CoreMediaIO                          UVC (USB Video Class)
 kCMIODevicePropertyDeviceIsRunningSomewhere
       |                                    |
       v                                    v
-afkick watch ── stream started ──> toggle CT_FOCUS_AUTO_CONTROL
+afkick watch -- stream started -->  toggle CT_FOCUS_AUTO_CONTROL
                 (delay, debounce)     off, 300ms, on
                                            |
                                            v
@@ -108,7 +108,7 @@ Two details worth knowing if you're building something similar:
 
 If your camera goes sharp the moment you open the vendor's tuning app but is
 blurry in every meeting app, it very likely has the same
-firmware-waits-for-a-poke behavior — try `afkick kick --camera <name>` while
+firmware-waits-for-a-poke behavior. Try `afkick kick --camera <name>` while
 streaming and see if it snaps into focus. If it does, `afkick install` and
 forget about it.
 
@@ -124,5 +124,5 @@ executable target wraps it with CoreMediaIO and UVC I/O.
 
 ## License
 
-MIT. Vendored `UVCKit` sources are MIT © 2016 Jeffrey Frey (see
+MIT. Vendored `UVCKit` sources are MIT (c) 2016 Jeffrey Frey (see
 `Sources/UVCKit/LICENSE-uvc-util`).

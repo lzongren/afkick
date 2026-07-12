@@ -1,6 +1,6 @@
 /// Decides when to "kick" a camera's autofocus based on stream state transitions.
 ///
-/// Pure state machine — no clocks, no hardware. Callers feed it observations
+/// Pure state machine: no clocks, no hardware. Callers feed it observations
 /// (`isRunning` at a timestamp) and act on the returned `Action`.
 public struct KickPolicy {
     public enum Action: Equatable {

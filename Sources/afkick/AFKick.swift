@@ -10,7 +10,7 @@ struct AFKick: ParsableCommand {
         discussion: """
             Some external webcams (e.g. the one built into the Dell U3223QZ \
             monitor) report autofocus as enabled but never run the focus scan \
-            when an app opens the stream — the image stays blurry until \
+            when an app opens the stream, the image stays blurry until \
             vendor software pokes the camera. afkick watches for stream \
             starts and toggles the UVC auto-focus control to wake the lens.
             """,
@@ -32,7 +32,7 @@ struct List: ParsableCommand {
     func run() throws {
         for (id, info) in CMIOCameraMonitor.devices() {
             let running = CMIOCameraMonitor.isRunningSomewhere(id) ? "streaming" : "idle"
-            print("\(info.name) [\(info.uniqueID)] — \(running)")
+            print("\(info.name) [\(info.uniqueID)] \(running)")
         }
     }
 }
@@ -84,16 +84,16 @@ struct Watch: ParsableCommand {
             DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
                 // separate copy check: skip if the stream already stopped
                 guard policy.shouldFire(at: Date().timeIntervalSince1970) else {
-                    log("stream stopped before kick — skipped")
+                    log("stream stopped before kick, skipped")
                     return
                 }
                 if UVCAutoFocus.kick(cameraName: cameraName) {
                     log("autofocus kicked")
                 } else {
-                    log("kick failed — camera unplugged or control rejected")
+                    log("kick failed: camera unplugged or control rejected")
                 }
             }
-            log("stream started — kicking in \(String(format: "%.1f", wait))s")
+            log("stream started, kicking in \(String(format: "%.1f", wait))s")
         }
 
         act(on: policy.observe(
