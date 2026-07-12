@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test
+        run: swift test
+
+      - name: Build release binary (arm64)
+        run: swift build -c release --arch arm64
+
+      - name: Package
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          BIN=.build/arm64-apple-macosx/release/afkick
+          tar -czf "afkick-${VERSION}-macos-arm64.tar.gz" -C "$(dirname "$BIN")" afkick
+          shasum -a 256 "afkick-${VERSION}-macos-arm64.tar.gz" > "afkick-${VERSION}-macos-arm64.tar.gz.sha256"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            afkick-*.tar.gz
+            afkick-*.tar.gz.sha256
+          generate_release_notes: true
